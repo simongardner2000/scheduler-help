@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using the congregation app</title>
+<meta name="description" content="How to use the congregation scheduling app: your assignments, reminders, away dates, the schedule and the documents.">
+<style>
+/*
+ * One page, no dependencies: it is opened on phones with poor reception and
+ * read once, so everything it needs is in this file.
+ */
+:root {
+  --page: #f1f5f9;
+  --card: #ffffff;
+  --sunken: #f8fafc;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --ink-strong: #0f172a;
+  --ink: #1f2937;
+  --ink-muted: #64748b;
+  --accent: #4f46e5;
+  --accent-soft: #eef2ff;
+  --accent-line: #c7d2fe;
+  --warn: #a16207;
+  --warn-soft: #fef3c7;
+  --warn-line: #fde68a;
+  --shot-bg: #e9eef5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0f172a;
+    --card: #1e293b;
+    --sunken: #172033;
+    --line: #334155;
+    --line-strong: #475569;
+    --ink-strong: #f8fafc;
+    --ink: #e2e8f0;
+    --ink-muted: #94a3b8;
+    --accent: #818cf8;
+    --accent-soft: #29304d;
+    --accent-line: #4c4f7a;
+    --warn: #fbbf24;
+    --warn-soft: #422006;
+    --warn-line: #854d0e;
+    --shot-bg: #16202f;
+  }
+}
+
+:root[data-theme="dark"] {
+  --page: #0f172a;
+  --card: #1e293b;
+  --sunken: #172033;
+  --line: #334155;
+  --line-strong: #475569;
+  --ink-strong: #f8fafc;
+  --ink: #e2e8f0;
+  --ink-muted: #94a3b8;
+  --accent: #818cf8;
+  --accent-soft: #29304d;
+  --accent-line: #4c4f7a;
+  --warn: #fbbf24;
+  --warn-soft: #422006;
+  --warn-line: #854d0e;
+  --shot-bg: #16202f;
+}
+
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 16px side gutters on a phone, centred column beyond that. */
+.wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+/* ------------------------------------------------------------------ header */
+
+header { padding: 40px 0 24px; }
+
+h1 {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 6vw, 34px);
+  line-height: 1.2;
+  font-weight: 680;
+  color: var(--ink-strong);
+  letter-spacing: -0.01em;
+}
+
+.lede { margin: 0; font-size: 17px; color: var(--ink-muted); max-width: 54ch; }
+
+/* --------------------------------------------------------------- the menu */
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--page) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+nav ul {
+  display: flex;
+  gap: 4px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  max-width: 760px;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+nav ul::-webkit-scrollbar { display: none; }
+
+nav a {
+  display: block;
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 560;
+  white-space: nowrap;
+}
+
+nav a:hover { background: var(--card); color: var(--ink-strong); }
+nav a.here { background: var(--accent-soft); color: var(--accent); }
+
+/* ------------------------------------------------------------- the content */
+
+section { padding: 34px 0 6px; scroll-margin-top: 60px; }
+
+h2 {
+  margin: 0 0 6px;
+  font-size: 13px
+;  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h2 + .section-lede { margin: 0 0 22px; font-size: 15px; color: var(--ink-muted); }
+
+/* Each topic is a card: on a phone the page is a long scroll, and the cards
+   give the eye somewhere to stop. */
+.topic {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  font-weight: 650;
+  color: var(--ink-strong);
+  line-height: 1.3;
+}
+
+.topic p { margin: 0 0 12px; }
+.topic p:last-child { margin-bottom: 0; }
+
+ol, ul.plain { margin: 0 0 12px; padding-left: 22px; }
+ol li, ul.plain li { margin-bottom: 8px; }
+ol li:last-child, ul.plain li:last-child { margin-bottom: 0; }
+
+/* A label quoted from the app, so the words on the page match the words on
+   the screen. */
+b.ui {
+  font-weight: 620;
+  color: var(--ink-strong);
+}
+
+a { color: var(--accent); }
+
+/* ------------------------------------------------------------ screenshots */
+
+figure {
+  margin: 16px 0 0;
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+figure img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  height: auto;
+  border-radius: 9px;
+  border: 1px solid var(--line-strong);
+}
+
+figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+/*
+ * Until a screenshot is dropped in, the slot says what belongs there. The
+ * image hides itself on failing to load, which keeps the page honest whether
+ * the file is present or not - and means adding one needs no change here.
+ */
+figure.missing img { display: none; }
+figure .slot { display: none; }
+
+figure.missing .slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 190px;
+  padding: 18px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 9px;
+  background: var(--shot-bg);
+  color: var(--ink-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+figure.missing .slot .name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------- notes */
+
+.note {
+  display: flex;
+  gap: 10px;
+  padding: 13px 15px;
+  margin: 0 0 12px;
+  border: 1px solid var(--accent-line);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 15px;
+}
+
+.note.warn {
+  border-color: var(--warn-line);
+  border-left-color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.note p { margin: 0; }
+.note strong { color: var(--ink-strong); }
+
+/* ------------------------------------------------------- the who-sees-what */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+th, td {
+  text-align: left;
+  padding: 9px 10px 9px 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+  font-weight: 650;
+}
+
+td:last-child, th:last-child { padding-right: 0; color: var(--ink-muted); }
+tr:last-child td { border-bottom: 0; }
+
+/* ------------------------------------------------------------------ footer */
+
+footer {
+  margin-top: 36px;
+  padding: 22px 0 46px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+footer p { margin: 0 0 8px; }
+footer p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <h1>Using the congregation app</h1>
+  <p class="lede">
+    Your assignments, your family's, your reminders and the documents that go with
+    them — all in one place. Here is how each part of it works.
+  </p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#start">Getting in</a></li>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#documents">Documents</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+<!-- =============================================================== start -->
+<section id="start">
+  <h2>Getting in</h2>
+  <p class="section-lede">There is no password. Your personal link is what signs you in.</p>
+
+  <div class="topic">
+    <h3>Open the link from an assignment email</h3>
+    <p>
+      Every assignment email carries a personal link. Opening it signs you in and keeps
+      you signed in. The link is yours alone, so there is nothing to remember and
+      nothing to type.
+    </p>
+    <p>
+      If you ever land on the <b class="ui">Sign in</b> screen, paste that link — or just
+      the code at the end of it — into the box and tap <b class="ui">Unlock</b>.
+    </p>
+    <figure class="missing">
+      <img src="shots/signin.png" alt="The Sign in screen, with a box for the personal link and an Unlock button.">
+      <div class="slot"><span class="name">shots/signin.png</span><span>The <b>Sign in</b> screen</span></div>
+      <figcaption>Paste the link or its code, then tap Unlock.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>Add it to your Home Screen</h3>
+    <p>
+      Open your browser's menu and choose to install it — on an iPhone or iPad that is
+      <b class="ui">Add to Home Screen</b> in the share menu; on Android it is
+      <b class="ui">Install and create shortcut</b> in Chrome's menu. It then opens like
+      any other app, full screen.
+    </p>
+    <div class="note warn">
+      <p>
+        <strong>On an iPhone or iPad this step is not optional if you want reminders.</strong>
+        Notifications only work once the app has been added to the Home Screen. And the
+        first time you open it from the new icon you may need to paste your personal link
+        again — the icon cannot carry it across on its own.
+      </p>
+    </div>
+    <figure class="missing">
+      <img src="shots/install.png" alt="Chrome's menu on Android, with Install and create shortcut circled.">
+      <div class="slot"><span class="name">shots/install.png</span><span>The browser menu, with the install option</span></div>
+      <figcaption>Android shown here; on an iPhone it is Add to Home Screen in the share menu. Do this before turning reminders on.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================================================================ home -->
+<section id="home">
+  <h2>Home</h2>
+  <p class="section-lede">What you have been given, and everything you can tell the scheduler.</p>
+
+  <div class="topic">
+    <h3>What is on at the congregation</h3>
+    <p>
+      Anything coming up shows in a banner at the very top of the page — an assembly, a
+      convention, the Memorial, a visit — marked <b class="ui">Happening now</b> or
+      <b class="ui">Coming up this week</b>, with its dates underneath.
+    </p>
+    <figure class="missing">
+      <img src="shots/home-events.png" alt="An event banner at the top of the home page showing an event name and its dates.">
+      <div class="slot"><span class="name">shots/home-events.png</span><span>The event banner at the top of Home</span></div>
+      <figcaption>Events appear above your assignments.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>Your assignments</h3>
+    <p>
+      Under <b class="ui">Your upcoming assignments</b> is every part you have in the
+      weeks published so far, with the date and your role. Tap any one of them to see its
+      details.
+    </p>
+    <figure class="missing">
+      <img src="shots/home-assignments.png" alt="The Your upcoming assignments list, each row showing a date, a part and a role.">
+      <div class="slot"><span class="name">shots/home-assignments.png</span><span><b>Your upcoming assignments</b></span></div>
+      <figcaption>Tap the assignment to see the details; tap the aeroplane to let the system know you are away that week or can't fulfill the assignment.</figcaption>
+    </figure>
+    <figure class="missing">
+      <img src="shots/assign-detail.png" alt="An assignment slip showing the date, which hall, who else is on the part, the setting with its lesson reference, and the note about attire.">
+      <div class="slot"><span class="name">shots/assign-detail.png</span><span>An assignment opened up</span></div>
+      <figcaption>Details of the assignment.</figcaption>
+    </figure>
+
+  </div>
+
+  <div class="topic">
+    <h3>A notification when something is assigned to you</h3>
+    <p>
+      Once reminders are on, you get a notification when a new part is assigned to you,
+      and a reminder the week before each one. You do not have to go looking.
+    </p>
+    <figure class="missing">
+      <img src="shots/notification.png" alt="A notification on a phone's lock screen about a new assignment.">
+      <div class="slot"><span class="name">shots/notification.png</span><span>A notification on the lock screen</span></div>
+      <figcaption>Turn these on with Remind me about my assignments, below.</figcaption>
+    </figure>
+    <figure class="missing">
+      <img src="shots/icon.png" alt="The app's Home Screen icon with a badge showing one unread notification.">
+      <div class="slot"><span class="name">shots/icon.png</span><span>The icon with its badge</span></div>
+      <figcaption>Notification mark against the app icon shortcut.</figcaption>
+    </figure>
+
+  </div>
+
+  <div class="topic">
+    <h3>If you cannot do one</h3>
+    <p>
+      Tap the small aeroplane beside the assignment. There are two things you might be
+      saying, so pick the one that fits:
+    </p>
+    <ul class="plain">
+      <li>
+        <b class="ui">Away this week?</b> — you will not be here. Give the date you are
+        available again. If others in your household are in the congregation, you can say
+        whether it is just you or the whole family.
+      </li>
+      <li>
+        <b class="ui">Unable to fulfill assignment?</b> — you will be here, but cannot take
+        this particular part. Tick <b class="ui">Please assign me for another week</b> if
+        you would still like one. Your other weeks are not affected.
+      </li>
+    </ul>
+    <p>Either way it goes straight to the scheduler. You may still be contacted about it.</p>
+    <figure class="missing">
+      <img src="shots/plane.png" alt="An assignment row with the small aeroplane icon circled at its right-hand end.">
+      <div class="slot"><span class="name">shots/plane.png</span><span>The aeroplane beside an assignment</span></div>
+      <figcaption>The aeroplane sits at the end of the row.</figcaption>
+    </figure>
+    <figure class="missing">
+      <img src="shots/away-or-unable.png" alt="The dialog with two options: Away this week, or Unable to fulfill assignment.">
+      <div class="slot"><span class="name">shots/away-or-unable.png</span><span>The dialog, both options showing</span></div>
+      <figcaption>Pick whichever of the two fits.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>Reminders, your own calendar, and holidays</h3>
+    <p>Underneath your list there are four things:</p>
+    <ul class="plain">
+      <li>
+        <b class="ui">Add to your calendar (.ics)</b> — adds the parts you have right
+        now, as a one-off. If the schedule changes afterwards, your calendar will not
+        know about it.
+      </li>
+      <li>
+        <b class="ui">Copy link for your calendar app</b> — copies that same address to
+        your clipboard. Paste it into your calendar's <em>subscribe to a calendar</em> option
+        and it re-checks for you, so changes arrive on their own. On an iPhone that is
+        Calendar → <b class="ui">Calendars</b> → <b class="ui">Add Calendar</b> →
+        <b class="ui">Add Subscription Calendar</b>; in Google Calendar it is
+        <b class="ui">Other calendars</b> → <b class="ui">+</b> →
+        <b class="ui">From URL</b>. This is the one worth doing — a one-off import goes
+        stale the first time a part moves.
+      </li>
+      <li>
+        <b class="ui">Remind me about my assignments</b> — turns notifications on. Tap it
+        again to turn them off. On an iPhone, add the app to your Home Screen first.
+      </li>
+      <li>
+        <b class="ui">Report away dates</b> — for a holiday rather than one assignment.
+        Give the day you leave and the day you are back, and nothing will be given to you
+        in between.
+      </li>
+    </ul>
+    <figure class="missing">
+      <img src="shots/home-actions.png" alt="The row of buttons under the assignments list: add to calendar, copy subscription link, remind me, report away dates.">
+      <div class="slot"><span class="name">shots/home-actions.png</span><span>The buttons under your assignments</span></div>
+      <figcaption>Calendar, reminders and away dates.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>Your family's assignments</h3>
+    <p>
+      If others in your household have parts, they appear under
+      <b class="ui">Family assignments</b>, each with their own colour. One page for the
+      whole family, so nobody misses a part.
+    </p>
+    <p>
+      Each person has their own two buttons: <b class="ui">Remind me about …</b> to get
+      their reminders on this phone, and <b class="ui">Report away dates</b> for them.
+      <b class="ui">Hide</b> takes someone out of the section, and you can bring them back
+      whenever you like.
+    </p>
+    <figure class="missing">
+      <img src="shots/home-family.png" alt="The Family assignments section with two members, each with their own list and buttons.">
+      <div class="slot"><span class="name">shots/home-family.png</span><span><b>Family assignments</b>, two members</span></div>
+      <figcaption>Reminders and away dates work per person.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================================================ schedule -->
+<section id="schedule">
+  <h2>Schedule</h2>
+  <p class="section-lede">The whole midweek meeting, week by week.</p>
+
+  <div class="topic">
+    <h3>The weeks ahead</h3>
+    <p>
+      Every week that has been published, in order. A week with no midweek meeting — an
+      assembly or a convention — says so plainly instead of listing parts, and shows what
+      is on instead.
+    </p>
+    <figure class="missing">
+      <img src="shots/schedule-weeks.png" alt="The Schedule tab listing several weeks, one of them showing no midweek meeting.">
+      <div class="slot"><span class="name">shots/schedule-weeks.png</span><span>The <b>Schedule</b> tab, a few weeks</span></div>
+      <figcaption>Tap a week to open it.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>Your own parts stand out</h3>
+    <p>
+      A badge on the week tells you how many parts in it are yours, and inside the week
+      your own parts are highlighted. You can find yourself at a glance without reading
+      the whole meeting.
+    </p>
+    <figure class="missing">
+      <img src="shots/schedule-mine.png" alt="A week open in the schedule with the viewer's own part highlighted and a count badge on the week.">
+      <div class="slot"><span class="name">shots/schedule-mine.png</span><span>A week with your part highlighted</span></div>
+      <figcaption>The badge counts your parts in that week.</figcaption>
+    </figure>
+  </div>
+
+  <div class="topic">
+    <h3>The details, and the lesson</h3>
+    <p>
+      Tap a part to open its slip: the date, which hall you are in, who you are working
+      with, and the setting for the part.
+    </p>
+    <p>
+      Where the setting mentions a scripture or a lesson, it is tappable —
+      <b class="ui">Tap the reference to read it</b> — and it opens there in the app
+      rather than sending you off to look it up.
+    </p>
+    <figure class="missing">
+      <img src="shots/assignment-slip.png" alt="An assignment slip showing date, hall, partner, the setting, and a tappable lesson reference.">
+      <div class="slot"><span class="name">shots/assignment-slip.png</span><span>An assignment slip with a tappable reference</span></div>
+      <figcaption>Brothers on the platform also see the note about attire.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- =========================================================== documents -->
+<section id="documents">
+  <h2>Documents</h2>
+  <p class="section-lede">What you see here depends on what you have been appointed to.</p>
+
+  <div class="topic">
+    <h3>Who sees what</h3>
+    <table>
+      <thead>
+        <tr><th>Document</th><th>Who can download it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b class="ui">Meeting Schedule</b></td><td>Everyone</td></tr>
+        <tr><td><b class="ui">Events</b></td><td>Everyone</td></tr>
+        <tr><td><b class="ui">Public Talk Schedule</b></td><td>Everyone</td></tr>
+        <tr><td><b class="ui">Assignments Schedule</b></td><td>Ministerial servants and elders</td></tr>
+        <tr><td><b class="ui">Assignments List</b></td><td>Elders</td></tr>
+        <tr>
+          <td><b class="ui">Chairman's Outline</b> and <b class="ui">Auxiliary Class Outline</b>, as PDF or Word</td>
+          <td>Anyone assigned to handle the chairman or auxiliary class counsellor part</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="topic">
+    <h3>Finding them</h3>
+    <p>
+      The congregation-wide documents are grouped at the top. Below them, each published
+      week has its own heading with whatever belongs to that week — so an outline sits
+      with the week it is for, not in a list you have to search.
+    </p>
+    <p>
+      Tap one and it downloads. The outlines come in both PDF and Word, whichever you
+      prefer to work from. The auxiliary class outline only appears for a week that has a
+      second school.
+    </p>
+    <figure class="missing">
+      <img src="shots/documents.png" alt="The Documents tab showing congregation documents and per-week outlines.">
+      <div class="slot"><span class="name">shots/documents.png</span><span>The <b>Documents</b> tab</span></div>
+      <figcaption>Congregation documents first, then a heading per week.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<footer>
+  <p>
+    Something not working, or an assignment that looks wrong? Speak to the brother who
+    looks after the schedule — the app only shows what has been published to it.
+  </p>
+  <p>
+    Your personal link is yours alone. Please do not pass it on; anyone with it can see
+    the congregation's schedule as you. The same goes for the calendar subscription
+    address — it carries the same personal access, so keep it to your own devices.
+  </p>
+</footer>
+
+</main>
+
+<script>
+/*
+ * A slot stops looking like a slot the moment its screenshot exists, so images
+ * can be added later without touching the markup. The class starts on, and is
+ * taken off only when the file actually loads.
+ */
+for (const img of document.querySelectorAll('figure img')) {
+  if (img.complete && img.naturalWidth > 0) img.closest('figure').classList.remove('missing');
+  else img.addEventListener('load', () => img.closest('figure').classList.remove('missing'));
+}
+
+/* The menu marks where you are, so a long scroll still tells you. */
+const links = [...document.querySelectorAll('nav a')];
+const spots = links.map((a) => document.querySelector(a.getAttribute('href')));
+
+const mark = () => {
+  // The last section whose top has passed the menu is the one being read.
+  let at = 0;
+  spots.forEach((s, i) => { if (s && s.getBoundingClientRect().top <= 70) at = i; });
+  links.forEach((a, i) => a.classList.toggle('here', i === at));
+};
+
+addEventListener('scroll', mark, { passive: true });
+mark();
+</script>
+
+</body>
+</html>
